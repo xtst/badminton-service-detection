@@ -1,7 +1,7 @@
 ﻿#define WINDOW_NAME "CVUI Hello World!"
 #define CVUI_IMPLEMENTATION
 
-
+#include <fstream>
 #include <opencv2/opencv.hpp>
 #include <opencv2/core/utils/logger.hpp>
 #include <iostream>
@@ -69,6 +69,10 @@ int main()
     // cv::namedWindow(WINDOW_NAME);
     cvui::init(WINDOW_NAME);
 
+    ifstream infile("D:/Github/build-GraphBuilder-Desktop_Qt_6_2_2_MSVC2019_64bit-Release/1.txt");
+    string s;
+    infile >> s;
+    cout << s;
     
     cv::utils::logging::setLogLevel(utils::logging::LOG_LEVEL_SILENT);
     system("color F0");
@@ -104,11 +108,11 @@ int main()
 
     while (camera.read(frame))
     {
-        if (cvui::button(frame, 110, 80, "Hello, world!")) {
-            // 计数
-            putText(frame, "ok", Point(10, 20), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 0, 255), 2);
-           // return 0;
-        }
+    //    if (cvui::button(frame, 110, 80, "Hello, world!")) {
+    //        // 计数
+    //        putText(frame, "ok", Point(10, 20), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 0, 255), 2);
+    //       // return 0;
+    //    }
 
 
         // convert to grayscale

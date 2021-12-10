@@ -8,6 +8,8 @@
 #include <QWidget>
 #include <windows.h>
 #include <QProcess>
+#include <iostream>
+#include <fstream>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -24,14 +26,7 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::Init(){
-    QProcess process;
-    process.start("tasklist");
-    process.waitForFinished(); //等待命令执行结束
-    QByteArray result = process.readAllStandardOutput();
-    if(-1==result.indexOf("badminton-service-detection.exe"))
-    {
-        process.startDetached("badminton-service-detection.exe");
-    }
+
 
 
     /* Create main widget and set mask, style sheet and shadow */
@@ -160,8 +155,15 @@ void MainWindow::Init(){
     createNew->setScale(0.9);
     bigIconButton *openFile = new bigIconButton(":/icons/icons/open.png", "Open from file", 10, this);
     connect(openFile, &bigIconButton::clicked, this, [=](){
-        QString inputPath = QFileDialog::getOpenFileName(this, tr("Open map"), " ",  tr("Map File(*.map)"));
+        QString inputPath = QFileDialog::getOpenFileName(this, tr("Open map"), " ",  tr("Map File(*.txt)"));
         if(!inputPath.isEmpty()){
+            ofstream CVarg("CVarg.bsd");
+            // Either this if you use UTF-8 anywhere
+            std::string utf8_text = inputPath.toUtf8().constData();
+            // or this if you're on Windows :-)
+            std::string current_locale_text = inputPath.toLocal8Bit().constData();
+            CVarg<<"FilePosition: "<<current_locale_text;
+
             MyCanvas *newCanvas = loadCanvas(inputPath);
             if(newCanvas != nullptr){
                 canvasList.push_back(newCanvas);
@@ -283,7 +285,19 @@ void MainWindow::Init(){
     createNewPage->AddContent(whiteSpace);
     createNewPage->AddContent(redescribe);
     createNewPage->AddContent(rename);
-    connect(createNew, &bigIconButton::clicked, createNewPage, [=](){rename->setValue("Layer_" + QString::asprintf("%d", canvasList.size()));redescribe->setValue("No description");createNewPage->slideIn();});
+
+    connect(createNew, &bigIconButton::clicked, createNewPage, [=](){
+        QProcess process;
+        process.start("tasklist");
+        process.waitForFinished(); //等待命令执行结束
+        QByteArray result = process.readAllStandardOutput();
+        if(-1==result.indexOf("badminton-service-detection.exe"))
+        {
+            process.startDetached("badminton-service-detection.exe");
+        }
+        rename->setValue("Layer_" + QString::asprintf("%d", canvasList.size()));redescribe->setValue("No description");createNewPage->slideIn();
+    });
+
     createNewPage->show();
     pageList.push_back(createNewPage);
 
