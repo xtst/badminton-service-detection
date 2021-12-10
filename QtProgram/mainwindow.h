@@ -57,6 +57,7 @@ private:
 
     MyCanvas* loadCanvas(const QString &path);
 
+
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();

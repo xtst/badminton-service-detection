@@ -4,6 +4,10 @@
 #include <QPainterPath>
 #include <QRegion>
 #include <QTimer>
+#include <QWindow>
+#include <QWidget>
+#include <windows.h>
+#include <QProcess>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -20,6 +24,16 @@ MainWindow::MainWindow(QWidget *parent)
 }
 
 void MainWindow::Init(){
+    QProcess process;
+    process.start("tasklist");
+    process.waitForFinished(); //等待命令执行结束
+    QByteArray result = process.readAllStandardOutput();
+    if(-1==result.indexOf("badminton-service-detection.exe"))
+    {
+        process.startDetached("badminton-service-detection.exe");
+    }
+
+
     /* Create main widget and set mask, style sheet and shadow */
     QPainterPath path;
     path.addRoundedRect(ui->mainWidget->rect(), cornerRadius - 1, cornerRadius - 1);
