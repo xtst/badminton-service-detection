@@ -68,7 +68,7 @@ void showInstruction(Mat frame) {
 	//设置绘制文本的相关参数
 	std::string text = "Enter ESC to quit. Enter any key to continue.";
 	int font_face = cv::FONT_HERSHEY_SIMPLEX;
-	double font_scale = 1.78;
+	double font_scale = 1.70;
 	int thickness = 2;
 	int baseline;
 	//获取文本框的长宽
