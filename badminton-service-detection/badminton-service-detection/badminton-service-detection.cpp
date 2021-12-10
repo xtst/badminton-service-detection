@@ -85,16 +85,26 @@ void showInstruction(Mat frame) {
 	cv::waitKey(0);
 }
 
-void processArguments() {}
+void processArguments() {
+	ifstream infile("D:/Github/build-GraphBuilder-Desktop_Qt_6_2_2_MSVC2019_64bit-Release/1.txt");
+	string key, value;
+	while (infile >> key >> value) {
+		if (key == "FilePosition") {
+			infile.close();
+			infile.open(value);
+			processArguments();
+			return;
+		}
+		if (key == "MusicPosition") {
+			// Play Music
+		}
+	}
+	infile.close();
+}
 
 int main() {
 	// cv::namedWindow(WINDOW_NAME);
 	// cvui::init(WINDOW_NAME);
-
-	ifstream infile("D:/Github/build-GraphBuilder-Desktop_Qt_6_2_2_MSVC2019_64bit-Release/1.txt");
-	string s;
-	infile >> s;
-	cout << s;
 
 	cv::utils::logging::setLogLevel(utils::logging::LOG_LEVEL_SILENT);
 	system("color F0");
@@ -183,7 +193,7 @@ int main() {
 			camera.read(frame);
 			cvtColor(frame, firstFrame, COLOR_BGR2GRAY);
 			GaussianBlur(firstFrame, firstFrame, Size(21, 21), 0);
-			past_time = now_time ;
+			past_time = now_time;
 		}
 
 		waitKey(30);
