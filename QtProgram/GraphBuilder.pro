@@ -31,6 +31,8 @@ HEADERS += \
 FORMS += \
     mainwindow.ui
 
+#LIBS += path_to_lib/Winmm.dll
+
 RC_ICONS = logo.ico
 
 # Default rules for deployment.

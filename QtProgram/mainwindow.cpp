@@ -163,6 +163,8 @@ void MainWindow::Init(){
             // or this if you're on Windows :-)
             std::string current_locale_text = inputPath.toLocal8Bit().constData();
             CVarg<<"FilePosition: "<<current_locale_text;
+            CVarg.close();
+
 
             MyCanvas *newCanvas = loadCanvas(inputPath);
             if(newCanvas != nullptr){

@@ -1,13 +1,18 @@
 ﻿#define WINDOW_NAME "CVUI Hello World!"
 #define CVUI_IMPLEMENTATION
-
+#pragma comment(lib, "Winmm.lib")
+#pragma comment(lib, "WINMM.LIB")
+#pragma
 //#include "cvui.h"
 #include <Windows.h>
 #include <algorithm>
 #include <chrono>
+#include <cmath>
 #include <ctime>
+#include <dsound.h>
 #include <fstream>
 #include <iostream>
+#include <mmsystem.h>
 #include <opencv2/core/core.hpp>
 #include <opencv2/core/ocl.hpp>
 #include <opencv2/core/utils/logger.hpp>
@@ -18,6 +23,7 @@
 #include <opencv2/video/tracking.hpp>
 #include <opencv2\imgproc\types_c.h>
 #include <stdio.h>
+#include <windows.h>
 using namespace std;
 using namespace cv;
 
@@ -82,22 +88,35 @@ void showInstruction(Mat frame) {
 
 	//显示绘制解果
 	cv::imshow("羽毛球发球检测系统（按ESC退出）", image);
-	cv::waitKey(0);
+	if (waitKey(0) == 27) {
+		// exit if ESC is pressed
+		exit(0);
+	}
+	// cv::waitKey(0);
 }
 
+string FilePosition = "default.bsd";
+string MusicPosition = "service-too-high.mp3";
+int CameraNumber = 0, TimeBetweenService = 2, TimeBetweenFrame = 30, MoveRange = 25;
+
 void processArguments() {
-	ifstream infile("D:/Github/build-GraphBuilder-Desktop_Qt_6_2_2_MSVC2019_64bit-Release/1.txt");
+	ifstream infile("default.bsd"); // bsd stands for badminton detection system
 	string key, value;
 	while (infile >> key >> value) {
-		if (key == "FilePosition") {
+		if (key == "FilePosition:") {
 			infile.close();
 			infile.open(value);
 			processArguments();
 			return;
 		}
-		if (key == "MusicPosition") {
+		if (key == "MusicPosition:") {
+		//	cout << key << " " << value << endl;
+			MusicPosition = value;
 			// Play Music 1
 		}
+		if (key == "TimeBetweenService:") { TimeBetweenService = stoi(value); }
+		if (key == "TimeBetweenFrame:") { TimeBetweenFrame = stoi(value); }
+		if (key == "MoveRange:") { MoveRange = stoi(value); }
 	}
 	infile.close();
 }
@@ -106,6 +125,8 @@ int main() {
 	// cv::namedWindow(WINDOW_NAME);
 	// cvui::init(WINDOW_NAME);
 
+	// mciSendString(L("play service-too-high.mp3 wait"), NULL, 0, NULL);
+	//processArguments();
 	cv::utils::logging::setLogLevel(utils::logging::LOG_LEVEL_SILENT);
 	system("color F0");
 	Mat frame, gray, frameDelta, thresh, firstFrame;
@@ -127,9 +148,9 @@ int main() {
 	// showInstruction();
 
 	camera.read(frame);
-	showInstruction(frame);
+	// showInstruction(frame);
 
-	int past_time = time(NULL);
+	int past_time = time(NULL), pastPos = -1;
 	// convert to grayscale and set the first frame
 	cvtColor(frame, firstFrame, COLOR_BGR2GRAY);
 	GaussianBlur(firstFrame, firstFrame, Size(21, 21), 0);
@@ -150,14 +171,15 @@ int main() {
 		Mat past = frame;
 		pair<int, int> pos;
 		for (int i = 0; i < cnts.size(); i++) {
-			if (contourArea(cnts[i]) < 7500) {
+			if (contourArea(cnts[i]) < 3000) {
 				past = frame;
 				continue;
 			}
 			int pointNumber = 0;
+			int MaxNum = past.cols * past.rows / 50;
+			int MinNum = past.cols * past.rows / 10000;
 			if (flag == 0) {
 				find(past, pos, pointNumber);
-				int MaxNum = past.cols * past.rows / 1000;
 				if (pointNumber > MaxNum) {
 					putText(frame, (string)("Background is too white."), Point(10, 20), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 162, 255), 2);
 					// cout << "MaxNUM  " << MaxNum  << endl;
@@ -168,35 +190,61 @@ int main() {
 			flag = 1;
 			string output = "";
 			auto color = Scalar(0, 0, 255);
-			if (pos.second < frame.rows / 2) {
-				output = "Service Faults";
-				// color = Scalar(0, 255, 126);
+			if (pointNumber > MinNum && pastPos > 0 && abs(pos.first - pastPos) > MoveRange) {
+				if (pos.second < frame.rows / 2) {
+					cout << MusicPosition << endl;
+					output = "Service Faults";
+					string s = "play " + MusicPosition + "wait"; /* +" wait";*/
+					// get temporary LPSTR (not really safe)
+					LPSTR pst = &s[0];
+					// get temporary LPCSTR (pretty safe)
+					LPCSTR pcstr = s.c_str();
+					// convert to std::wstring
+					std::wstring ws;
+					ws.assign(s.begin(), s.end());
+					// get temporary LPWSTR (not really safe)
+					LPWSTR pwst = &ws[0];
+					// get temporary LPCWSTR (pretty safe)
+					LPCWSTR pcwstr = ws.c_str();
+					mciSendString(pcwstr, NULL, 0, NULL);
+
+					// std::wstring stemp = std::wstring(MusicPosition.begin(), MusicPosition.end());
+					// LPCWSTR sw = stemp.c_str();
+					// PlaySound(sw , NULL, SND_FILENAME); //SND_FILENAME or SND_LOOP
+
+					// color = Scalar(0, 255, 126);
+				}
+				else {
+
+					output = "Legal Service";
+					color = Scalar(0, 255, 126);
+				}
 			}
-			else {
-				output = "Legal Service";
-				color = Scalar(0, 255, 126);
-			}
+			else
+				continue;
 			output += " (" + to_string(pos.first) + "," + to_string(pos.second) + ")";
 			putText(frame, output, Point(10, 20), FONT_HERSHEY_SIMPLEX, 0.75, color, 2);
+			break;
 		}
 
+		pastPos = pos.first;
 		imshow("羽毛球发球检测系统（按ESC退出）", frame);
 
-		if (waitKey(1) == 27) {
+		if (waitKey(3) == 27) {
 			// exit if ESC is pressed
 			return 0;
 		}
 
 		// firstFrame = gray;
 		int now_time = time(NULL);
-		if (now_time - past_time > 2) {
+		if (now_time - past_time > TimeBetweenService) {
 			camera.read(frame);
 			cvtColor(frame, firstFrame, COLOR_BGR2GRAY);
 			GaussianBlur(firstFrame, firstFrame, Size(21, 21), 0);
 			past_time = now_time;
 		}
 
-		waitKey(30);
+		waitKey(TimeBetweenFrame);
 	}
 
 	return 0;
