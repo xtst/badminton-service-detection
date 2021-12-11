@@ -59,9 +59,9 @@ void MainWindow::Init(){
     /*****************************************************************/
 
     /* Create about page */
-    defaultSettingsPage = new SlidePage(cornerRadius, "ABOUT", ui->mainWidget);
-    textInputItem *version = new textInputItem("version", defaultSettingsPage);
-    version->setValue("1.3-beta");
+    defaultSettingsPage = new SlidePage(cornerRadius, "关于", ui->mainWidget);
+    textInputItem *version = new textInputItem("版本", defaultSettingsPage);
+    version->setValue("0.1.1");
     version->setEnabled(false);
     textInputItem *updateDate = new textInputItem("last-upd", defaultSettingsPage);
     updateDate->setValue("2021/12/6 10:14");
@@ -151,7 +151,7 @@ void MainWindow::Init(){
 
     defaultPage = new QWidget(ui->mainWidget);
     defaultPage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-    bigIconButton *createNew = new bigIconButton(":/icons/icons/create.png", "Create new", 10, this);
+    bigIconButton *createNew = new bigIconButton(":/icons/icons/create.png", "开始检测", 10, this);
     createNew->setScale(0.9);
     bigIconButton *openFile = new bigIconButton(":/icons/icons/open.png", "打开配置文件", 10, this);
     connect(openFile, &bigIconButton::clicked, this, [=](){
@@ -205,10 +205,10 @@ void MainWindow::Init(){
 
     /* create layers page */
     //for add new page
-    textInputItem *rename = new textInputItem("Name:",createNewPage);
-    rename->setValue("Layer_" + QString::asprintf("%d", canvasList.size()));
-    textInputItem *redescribe = new textInputItem("Detail:",createNewPage);
-    redescribe->setValue("No description");
+  //  textInputItem *rename = new textInputItem("小贴士1",createNewPage);
+  //  rename->setValue("Layer_" + QString::asprintf("%d", canvasList.size()));
+  //  textInputItem *redescribe = new textInputItem("Detail:",createNewPage);
+  //  redescribe->setValue("No description");
 
     layersPage = new SlidePage(cornerRadius, "详细信息", ui->mainWidget);
     layersPage->stackUnder(createNewPage);
@@ -310,12 +310,13 @@ void MainWindow::Init(){
     createNewPage->AddContent(dirSel);
     createNewPage->AddContent(structureSel);
     createNewPage->AddContent(whiteSpace);
-    createNewPage->AddContent(redescribe);
-    createNewPage->AddContent(rename);
+ //   createNewPage->AddContent(redescribe);
+ //   createNewPage->AddContent(rename);
 
     connect(createNew, &bigIconButton::clicked, createNewPage, [=](){
 
-        rename->setValue("Layer_" + QString::asprintf("%d", canvasList.size()));redescribe->setValue("No description");createNewPage->slideIn();
+      //  rename->setValue("Layer_" + QString::asprintf("%d", canvasList.size()));redescribe->setValue("No description");
+        createNewPage->slideIn();
     });
 
     createNewPage->show();
