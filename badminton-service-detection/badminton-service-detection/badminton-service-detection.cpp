@@ -103,6 +103,7 @@ void processArguments() {
 	ifstream infile("default.bsd"); // bsd stands for badminton detection system
 	string key, value;
 	while (infile >> key >> value) {
+		cout << key << " " << value << endl;
 		if (key == "FilePosition:") {
 			infile.close();
 			infile.open(value);
@@ -110,7 +111,6 @@ void processArguments() {
 			return;
 		}
 		if (key == "MusicPosition:") {
-		//	cout << key << " " << value << endl;
 			MusicPosition = value;
 			// Play Music 1
 		}
@@ -126,7 +126,7 @@ int main() {
 	// cvui::init(WINDOW_NAME);
 
 	// mciSendString(L("play service-too-high.mp3 wait"), NULL, 0, NULL);
-	//processArguments();
+	processArguments();
 	cv::utils::logging::setLogLevel(utils::logging::LOG_LEVEL_SILENT);
 	system("color F0");
 	Mat frame, gray, frameDelta, thresh, firstFrame;
@@ -194,7 +194,7 @@ int main() {
 				if (pos.second < frame.rows / 2) {
 					cout << MusicPosition << endl;
 					output = "Service Faults";
-					string s = "play " + MusicPosition + "wait"; /* +" wait";*/
+					string s = "play " + MusicPosition; /* +" wait";*/
 					// get temporary LPSTR (not really safe)
 					LPSTR pst = &s[0];
 					// get temporary LPCSTR (pretty safe)

@@ -157,7 +157,7 @@ void MainWindow::Init(){
     connect(openFile, &bigIconButton::clicked, this, [=](){
         QString inputPath = QFileDialog::getOpenFileName(this, tr("Open map"), " ",  tr("Map File(*.txt)"));
         if(!inputPath.isEmpty()){
-            ofstream CVarg("CVarg.bsd");
+            ofstream CVarg("default.bsd");
             // Either this if you use UTF-8 anywhere
             std::string utf8_text = inputPath.toUtf8().constData();
             // or this if you're on Windows :-)

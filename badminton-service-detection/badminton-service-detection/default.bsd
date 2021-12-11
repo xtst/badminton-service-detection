@@ -1,0 +1,5 @@
+MusicPosition: 2.mp3
+CameraNumber: 0
+TimeBetweenService: 2
+TimeBetweenFrame: 30
+MoveRange:  25
