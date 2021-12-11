@@ -96,7 +96,7 @@ void processArguments() {
 			return;
 		}
 		if (key == "MusicPosition") {
-			// Play Music
+			// Play Music 1
 		}
 	}
 	infile.close();
