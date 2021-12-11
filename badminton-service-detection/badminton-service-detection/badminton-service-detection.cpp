@@ -105,9 +105,19 @@ void processArguments() {
 	while (infile >> key >> value) {
 		cout << key << " " << value << endl;
 		if (key == "FilePosition:") {
-			infile.close();
-			infile.open(value);
-			processArguments();
+			ifstream infile2(value);
+			//infile2.close();
+			while (infile2 >> key >> value) {
+				cout << key << " " << value << endl;
+				if (key == "MusicPosition:") {
+					MusicPosition = value;
+					// Play Music 1
+				}
+				if (key == "TimeBetweenService:") { TimeBetweenService = stoi(value); }
+				if (key == "TimeBetweenFrame:") { TimeBetweenFrame = stoi(value); }
+				if (key == "MoveRange:") { MoveRange = stoi(value); }
+			}
+			infile2.close();
 			return;
 		}
 		if (key == "MusicPosition:") {

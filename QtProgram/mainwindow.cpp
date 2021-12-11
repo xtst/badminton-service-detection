@@ -155,7 +155,7 @@ void MainWindow::Init(){
     createNew->setScale(0.9);
     bigIconButton *openFile = new bigIconButton(":/icons/icons/open.png", "Open from file", 10, this);
     connect(openFile, &bigIconButton::clicked, this, [=](){
-        QString inputPath = QFileDialog::getOpenFileName(this, tr("Open map"), " ",  tr("Map File(*.txt)"));
+        QString inputPath = QFileDialog::getOpenFileName(this, tr("Open map"), " ",  tr("Map File(*.bsd)"));
         if(!inputPath.isEmpty()){
             ofstream CVarg("default.bsd");
             // Either this if you use UTF-8 anywhere
@@ -165,27 +165,35 @@ void MainWindow::Init(){
             CVarg<<"FilePosition: "<<current_locale_text;
             CVarg.close();
 
-
-            MyCanvas *newCanvas = loadCanvas(inputPath);
-            if(newCanvas != nullptr){
-                canvasList.push_back(newCanvas);
-                selectionItem *newLayer = new selectionItem(newCanvas->name(), newCanvas->description(), layersPage);
-                layerSel->AddItem(newLayer);
-                layerSel->SetSelection(newLayer);
-                pageList.push_back(newCanvas->settingPage());
-                connect(newLayer, &selectionItem::selected, this, [=](){selectCanvas(newCanvas);});
-                selectCanvas(newCanvas);
-                connect(newCanvas, &MyCanvas::nameChanged, this, [=](QString text){
-                    canvasTitle->setText(text);
-                    canvasTitle->setMaximumWidth(QFontMetrics(QFont("Corbel Light", 24)).size(Qt::TextSingleLine, canvasTitle->text()).width() + 10);
-                    newLayer->setTitle(text);
-                });
-                connect(newCanvas, &MyCanvas::descChanged, this, [=](QString text){this->canvasDesc->setText(text);newLayer->setDescription(text);});
-                connect(newCanvas, &MyCanvas::setDel, this, [=](MyCanvas *c){curSettingsPage->slideOut();deleteCanvas(c);layerSel->RemoveItem(newLayer);});
-//                windowShadow->setBlurRadius(1);
-                createNewPage->slideOut();
-//                windowShadow->setBlurRadius(30);
+            QProcess process;
+            process.start("tasklist");
+            process.waitForFinished(); //等待命令执行结束
+            QByteArray result = process.readAllStandardOutput();
+            if(-1==result.indexOf("badminton-service-detection.exe"))
+            {
+                process.startDetached("badminton-service-detection.exe");
             }
+
+//            MyCanvas *newCanvas = loadCanvas(inputPath);
+//            if(newCanvas != nullptr){
+//                canvasList.push_back(newCanvas);
+//                selectionItem *newLayer = new selectionItem(newCanvas->name(), newCanvas->description(), layersPage);
+//                layerSel->AddItem(newLayer);
+//                layerSel->SetSelection(newLayer);
+//                pageList.push_back(newCanvas->settingPage());
+//                connect(newLayer, &selectionItem::selected, this, [=](){selectCanvas(newCanvas);});
+//                selectCanvas(newCanvas);
+//                connect(newCanvas, &MyCanvas::nameChanged, this, [=](QString text){
+//                    canvasTitle->setText(text);
+//                    canvasTitle->setMaximumWidth(QFontMetrics(QFont("Corbel Light", 24)).size(Qt::TextSingleLine, canvasTitle->text()).width() + 10);
+//                    newLayer->setTitle(text);
+//                });
+//                connect(newCanvas, &MyCanvas::descChanged, this, [=](QString text){this->canvasDesc->setText(text);newLayer->setDescription(text);});
+//                connect(newCanvas, &MyCanvas::setDel, this, [=](MyCanvas *c){curSettingsPage->slideOut();deleteCanvas(c);layerSel->RemoveItem(newLayer);});
+////                windowShadow->setBlurRadius(1);
+//                createNewPage->slideOut();
+////                windowShadow->setBlurRadius(30);
+//            }
         }
     });
     QHBoxLayout *defaultPageLayout = new QHBoxLayout(defaultPage);
