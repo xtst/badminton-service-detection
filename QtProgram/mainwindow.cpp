@@ -91,11 +91,11 @@ void MainWindow::Init(){
     QFontMetrics titleFm(titleFont);
     canvasTitle = new QLineEdit(this);
     canvasTitle->setFont(titleFont);
-    canvasTitle->setText("START");
+    canvasTitle->setText("「羽毛球发球高度检测系统」");
     canvasTitle->setMaxLength(20);
     canvasTitle->setReadOnly(true);
     canvasTitle->setMinimumHeight(titleFm.height());
-    canvasTitle->setMaximumWidth(titleFm.size(Qt::TextSingleLine, "START").width() + 10);
+    canvasTitle->setMaximumWidth(titleFm.size(Qt::TextSingleLine, "「羽毛球发球高度检测系统」").width() + 10);
     canvasTitle->setStyleSheet("background-color:#00000000;border-style:none;border-width:0px;margin-left:1px;");
     connect(canvasTitle, &QLineEdit::textEdited, canvasTitle, [=](QString text){canvasTitle->setMaximumWidth(titleFm.size(Qt::TextSingleLine, text).width());});
 
@@ -103,7 +103,7 @@ void MainWindow::Init(){
     QFontMetrics descFm(descFont);
     canvasDesc = new QLineEdit(this);
     canvasDesc->setFont(descFont);
-    canvasDesc->setText("Add your first canvas to start");
+    canvasDesc->setText("创建一次检测或者选择配置文件");
     canvasDesc->setMaxLength(128);
     canvasDesc->setReadOnly(true);
     canvasDesc->setMinimumHeight(descFm.lineSpacing());
@@ -153,9 +153,9 @@ void MainWindow::Init(){
     defaultPage->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     bigIconButton *createNew = new bigIconButton(":/icons/icons/create.png", "Create new", 10, this);
     createNew->setScale(0.9);
-    bigIconButton *openFile = new bigIconButton(":/icons/icons/open.png", "Open from file", 10, this);
+    bigIconButton *openFile = new bigIconButton(":/icons/icons/open.png", "打开配置文件", 10, this);
     connect(openFile, &bigIconButton::clicked, this, [=](){
-        QString inputPath = QFileDialog::getOpenFileName(this, tr("Open map"), " ",  tr("Map File(*.bsd)"));
+        QString inputPath = QFileDialog::getOpenFileName(this, tr("Open map"), " ",  tr("羽毛球发球检测系统配置文件(*.bsd)"));
         if(!inputPath.isEmpty()){
             ofstream CVarg("default.bsd");
             // Either this if you use UTF-8 anywhere
@@ -210,13 +210,14 @@ void MainWindow::Init(){
     textInputItem *redescribe = new textInputItem("Detail:",createNewPage);
     redescribe->setValue("No description");
 
-    layersPage = new SlidePage(cornerRadius, "LAYERS", ui->mainWidget);
+    layersPage = new SlidePage(cornerRadius, "详细信息", ui->mainWidget);
     layersPage->stackUnder(createNewPage);
     connect(layersIcon, &customIcon::clicked, layersPage, &SlidePage::slideIn);
-    layerSel = new singleSelectGroup("Layers", layersPage);
+    layerSel = new singleSelectGroup("羽毛球发球高度检测系统", layersPage);
     connect(layerSel, &singleSelectGroup::itemChange, layersPage, [=](){layersPage->UpdateContents();});
-    textButton *openFileBtn = new textButton("Open file", layersPage);
+    textButton *openFileBtn = new textButton("项目内容详细网站", layersPage);
     connect(openFileBtn, &textButton::clicked, this, [=](){
+        /*
         QString inputPath = QFileDialog::getOpenFileName(this, tr("Open map"), " ",  tr("Map File(*.map)"));
         if(!inputPath.isEmpty()){
             MyCanvas *newCanvas = loadCanvas(inputPath);
@@ -237,13 +238,20 @@ void MainWindow::Init(){
                 connect(newCanvas, &MyCanvas::setDel, this, [=](MyCanvas *c){curSettingsPage->slideOut();deleteCanvas(c);layerSel->RemoveItem(newLayer);});
                 createNewPage->slideOut();
             }
-        }
+        }*/
+        const QUrl regUrl(QLatin1String("https://just-cougar-698.notion.site/24474cf606494b59aa4bf6160f7c6940"));
+        QDesktopServices::openUrl(regUrl);
     });
-    textButton *addNewBtn = new textButton("Create new", layersPage);
+    textButton *addNewBtn = new textButton("演示视频(B站)", layersPage);
     layersPage->AddContent(addNewBtn);
     layersPage->AddContent(openFileBtn);
     layersPage->AddContent(layerSel);
-    connect(addNewBtn, &textButton::clicked, this, [=](){rename->setValue("Layer_" + QString::asprintf("%d", canvasList.size()));redescribe->setValue("No description");createNewPage->slideIn();});
+    connect(addNewBtn, &textButton::clicked, this, [=](){
+        const QUrl regUrl(QLatin1String("https://www.bilibili.com/video/BV1jR4y147g8"));
+        QDesktopServices::openUrl(regUrl);
+//        rename->setValue("Layer_" + QString::asprintf("%d", canvasList.size()));
+//        redescribe->setValue("No description");createNewPage->slideIn();
+    });
     layersPage->show();
     pageList.push_back(layersPage);
 
@@ -351,9 +359,9 @@ void MainWindow::deleteCanvas(MyCanvas *canvas){
         ui->displayLayout->addWidget(defaultPage);
         defaultPage->show();
         curCanvas = nullptr;
-        canvasTitle->setText("START");
-        canvasTitle->setMaximumWidth(QFontMetrics(QFont("Corbel Light", 24)).size(Qt::TextSingleLine, "START").width() + 10);
-        canvasDesc->setText("Add your first canvas to start");
+        canvasTitle->setText("「羽毛球发球高度检测系统」");
+        canvasTitle->setMaximumWidth(QFontMetrics(QFont("Corbel Light", 24)).size(Qt::TextSingleLine, "「羽毛球发球高度检测系统」").width() + 10);
+        canvasDesc->setText("创建一次检测或者选择配置文件");
         curSettingsPage = defaultSettingsPage;
     }
     pageList.erase(pageList.begin() + pageList.indexOf(canvas->settingPage()));

@@ -87,7 +87,7 @@ void showInstruction(Mat frame) {
 	cv::putText(image, text, origin, font_face, font_scale, cv::Scalar(23, 23, 23), thickness, 4, 0);
 
 	//显示绘制解果
-	cv::imshow("羽毛球发球检测系统（按ESC退出）", image);
+	cv::imshow("羽毛球发球检测系统[摄像头]（按ESC退出）", image);
 	if (waitKey(0) == 27) {
 		// exit if ESC is pressed
 		exit(0);
@@ -238,7 +238,7 @@ int main() {
 		}
 
 		pastPos = pos.first;
-		imshow("羽毛球发球检测系统（按ESC退出）", frame);
+		imshow("羽毛球发球检测系统[摄像头]（按ESC退出）", frame);
 
 		if (waitKey(3) == 27) {
 			// exit if ESC is pressed
