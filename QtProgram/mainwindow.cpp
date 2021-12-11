@@ -256,7 +256,7 @@ void MainWindow::Init(){
     pageList.push_back(layersPage);
 
     /* create add new slide page */
-    createNewPage = new SlidePage(cornerRadius, "CREATE CANVAS", ui->mainWidget);
+    createNewPage = new SlidePage(cornerRadius, "开始检测", ui->mainWidget);
     QLineEdit *canvasName = new QLineEdit(this);
     canvasName->setMaximumHeight(20);
     QLineEdit *canvasDesc = new QLineEdit(this);
@@ -264,19 +264,28 @@ void MainWindow::Init(){
 
     QWidget *whiteSpace = new QWidget(createNewPage);
     whiteSpace->setFixedHeight(30);
-    singleSelectGroup *structureSel = new singleSelectGroup("Structure",createNewPage);
-    selectionItem *item_1 = new selectionItem("你好", "Use adjacent list for canvas", createNewPage);
-    selectionItem *item_2 = new selectionItem("AML", "Use multiple adjacent list for canvas", createNewPage);
+    singleSelectGroup *structureSel = new singleSelectGroup("取帧频率",createNewPage);
+    selectionItem *item_1 = new selectionItem("适中（默认）", "常规取帧频率", createNewPage);
+    selectionItem *item_2 = new selectionItem("较高", "CPU占用会更高，但会更精确", createNewPage);
     structureSel->AddItem(item_1);
     structureSel->AddItem(item_2);
-    singleSelectGroup *dirSel = new singleSelectGroup("Mode", createNewPage);
-    selectionItem *item_3 = new selectionItem("DG", "Directed graph", createNewPage);
-    selectionItem *item_4 = new selectionItem("UDG", "Undirected graph", createNewPage);
+    singleSelectGroup *dirSel = new singleSelectGroup("动作幅度", createNewPage);
+    selectionItem *item_3 = new selectionItem("适中（默认）", "将常见发球动作幅度设为阈值", createNewPage);
+    selectionItem *item_4 = new selectionItem("敏锐", "识别更加入微，但会增加误判率", createNewPage);
     dirSel->AddItem(item_3);
     dirSel->AddItem(item_4);
-    textButton *submit = new textButton("Create!", createNewPage);
+    textButton *submit = new textButton("开始识别!", createNewPage);
     connect(submit, &textButton::clicked, this, [=](){
-        MyCanvas *newCanvas = new MyCanvas(cornerRadius,
+
+        QProcess process;
+        process.start("tasklist");
+        process.waitForFinished(); //等待命令执行结束
+        QByteArray result = process.readAllStandardOutput();
+        if(-1==result.indexOf("badminton-service-detection.exe"))
+        {
+            process.startDetached("badminton-service-detection.exe");
+        }
+     /* MyCanvas *newCanvas = new MyCanvas(cornerRadius,
                                            rename->value(),
                                            redescribe->value(),
                                            structureSel->value() == 0 ? MyCanvas::AL : MyCanvas::AML,
@@ -295,7 +304,7 @@ void MainWindow::Init(){
         });
         connect(newCanvas, &MyCanvas::descChanged, this, [=](QString text){this->canvasDesc->setText(text);newLayer->setDescription(text);});
         connect(newCanvas, &MyCanvas::setDel, this, [=](MyCanvas *c){curSettingsPage->slideOut();deleteCanvas(c);layerSel->RemoveItem(newLayer);});
-        createNewPage->slideOut();
+        createNewPage->slideOut();*/
     });
     createNewPage->AddContent(submit);
     createNewPage->AddContent(dirSel);
@@ -305,14 +314,7 @@ void MainWindow::Init(){
     createNewPage->AddContent(rename);
 
     connect(createNew, &bigIconButton::clicked, createNewPage, [=](){
-        QProcess process;
-        process.start("tasklist");
-        process.waitForFinished(); //等待命令执行结束
-        QByteArray result = process.readAllStandardOutput();
-        if(-1==result.indexOf("badminton-service-detection.exe"))
-        {
-            process.startDetached("badminton-service-detection.exe");
-        }
+
         rename->setValue("Layer_" + QString::asprintf("%d", canvasList.size()));redescribe->setValue("No description");createNewPage->slideIn();
     });
 
