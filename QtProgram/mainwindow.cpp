@@ -215,7 +215,8 @@ void MainWindow::Init(){
     connect(layersIcon, &customIcon::clicked, layersPage, &SlidePage::slideIn);
     layerSel = new singleSelectGroup("羽毛球发球高度检测系统", layersPage);
     connect(layerSel, &singleSelectGroup::itemChange, layersPage, [=](){layersPage->UpdateContents();});
-    textButton *openFileBtn = new textButton("项目内容详细网站", layersPage);
+
+    textButton *openFileBtn = new textButton("项目详细介绍网站&软件用法", layersPage);
     connect(openFileBtn, &textButton::clicked, this, [=](){
         /*
         QString inputPath = QFileDialog::getOpenFileName(this, tr("Open map"), " ",  tr("Map File(*.map)"));
@@ -252,6 +253,11 @@ void MainWindow::Init(){
 //        rename->setValue("Layer_" + QString::asprintf("%d", canvasList.size()));
 //        redescribe->setValue("No description");createNewPage->slideIn();
     });
+
+  /*  textInputItem *usage = new textInputItem("版本", layersPage);
+    usage->setValue("0.1.1");
+    usage->setEnabled(false);*/
+
     layersPage->show();
     pageList.push_back(layersPage);
 
@@ -264,6 +270,9 @@ void MainWindow::Init(){
 
     QWidget *whiteSpace = new QWidget(createNewPage);
     whiteSpace->setFixedHeight(30);
+
+    singleSelectGroup *structureSel0 = new singleSelectGroup("「请确认摄像头高度为1.15m」",createNewPage);
+
     singleSelectGroup *structureSel = new singleSelectGroup("取帧频率",createNewPage);
     selectionItem *item_1 = new selectionItem("适中（默认）", "常规取帧频率", createNewPage);
     selectionItem *item_2 = new selectionItem("较高", "CPU占用会更高，但会更精确", createNewPage);
@@ -276,6 +285,16 @@ void MainWindow::Init(){
     dirSel->AddItem(item_4);
     textButton *submit = new textButton("开始识别!", createNewPage);
     connect(submit, &textButton::clicked, this, [=](){
+        ofstream outfile;
+        outfile.open("default.bsd");
+        outfile<<"TimeBetweenFrame: ";
+        if((structureSel->value()) == 0) outfile << 30;
+        else outfile << 20;
+        outfile<< endl <<"MoveRange: ";
+        if((dirSel->value()) == 0) outfile << 25;
+        else outfile << 12;
+        outfile<<endl;
+        outfile.close();
 
         QProcess process;
         process.start("tasklist");
@@ -310,6 +329,7 @@ void MainWindow::Init(){
     createNewPage->AddContent(dirSel);
     createNewPage->AddContent(structureSel);
     createNewPage->AddContent(whiteSpace);
+    createNewPage->AddContent(structureSel0);
  //   createNewPage->AddContent(redescribe);
  //   createNewPage->AddContent(rename);
 
