@@ -47,10 +47,10 @@ void find(Mat& image, pair<int, int>& pos, int& pointNum) {
 	int nr = image.rows;					// number of rows
 	int nc = image.cols * image.channels(); // total number of elements per line
 	int all = 0;
-	for (int j = nr / 8; j < nr / 8 * 7; j++) {
+	for (int j = nr / 5; j < nr / 5 * 4; j++) {
 		uchar* data = image.ptr<uchar>(j);
 		for (int i = nc / 5; i < nc / 5 * 4; i++) {
-			if (data[i] > 210) {
+			if (data[i] > 205) {
 				all++;
 				pos.first += i;
 				pos.second += j;
@@ -139,6 +139,7 @@ int main() {
 
 	// mciSendString(L("play service-too-high.mp3 wait"), NULL, 0, NULL);
 	processArguments();
+
 	cv::utils::logging::setLogLevel(utils::logging::LOG_LEVEL_SILENT);
 	system("color F0");
 	Mat frame, gray, frameDelta, thresh, firstFrame;
@@ -188,7 +189,7 @@ int main() {
 				continue;
 			}
 			int pointNumber = 0;
-			int MaxNum = past.cols * past.rows / 50;
+			int MaxNum = past.cols * past.rows / 10;
 			int MinNum = past.cols * past.rows / 10000;
 			if (flag == 0) {
 				find(past, pos, pointNumber);

@@ -295,8 +295,9 @@ void MainWindow::Init(){
         outfile.open("default.bsd");
 
         outfile<<"CameraNumber: ";
-        if((structureSel->value()) == 0) outfile << 0;
+        if((structureSelzero->value()) == 0) outfile << 0;
         else outfile << 1;
+        cout<<endl;
         outfile<<"TimeBetweenFrame: ";
         if((structureSel->value()) == 0) outfile << 30;
         else outfile << 20;
