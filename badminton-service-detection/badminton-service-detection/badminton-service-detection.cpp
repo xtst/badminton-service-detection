@@ -116,6 +116,7 @@ void processArguments() {
 				if (key == "TimeBetweenService:") { TimeBetweenService = stoi(value); }
 				if (key == "TimeBetweenFrame:") { TimeBetweenFrame = stoi(value); }
 				if (key == "MoveRange:") { MoveRange = stoi(value); }
+				if (key == "CameraNumber:") { CameraNumber = stoi(value); }
 			}
 			infile2.close();
 			return;
@@ -127,6 +128,7 @@ void processArguments() {
 		if (key == "TimeBetweenService:") { TimeBetweenService = stoi(value); }
 		if (key == "TimeBetweenFrame:") { TimeBetweenFrame = stoi(value); }
 		if (key == "MoveRange:") { MoveRange = stoi(value); }
+		if (key == "CameraNumber:") { CameraNumber = stoi(value); }
 	}
 	infile.close();
 }
@@ -141,7 +143,7 @@ int main() {
 	system("color F0");
 	Mat frame, gray, frameDelta, thresh, firstFrame;
 	vector<vector<Point>> cnts;
-	VideoCapture camera(0); // open camera //   camera.set(3, 512); //  camera.set(4, 288);
+	VideoCapture camera(CameraNumber); // open camera //   camera.set(3, 512); //  camera.set(4, 288);
 
 	if (camera.isOpened()) {
 		cout << "图像宽度=" << camera.get(CAP_PROP_FRAME_WIDTH) << endl;

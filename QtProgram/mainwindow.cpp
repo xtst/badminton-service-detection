@@ -273,6 +273,12 @@ void MainWindow::Init(){
 
     singleSelectGroup *structureSel0 = new singleSelectGroup("「请确认摄像头高度为1.15m」",createNewPage);
 
+    singleSelectGroup *structureSelzero = new singleSelectGroup("摄像头选择",createNewPage);
+    selectionItem *item_a = new selectionItem("电脑自带前置摄像头", "请检查是否关闭摄像锁", createNewPage);
+    selectionItem *item_b = new selectionItem("外接摄像头", "请检查电脑已经连接摄像头", createNewPage);
+    structureSelzero->AddItem(item_a);
+    structureSelzero->AddItem(item_b);
+
     singleSelectGroup *structureSel = new singleSelectGroup("取帧频率",createNewPage);
     selectionItem *item_1 = new selectionItem("适中（默认）", "常规取帧频率", createNewPage);
     selectionItem *item_2 = new selectionItem("较高", "CPU占用会更高，但会更精确", createNewPage);
@@ -287,6 +293,10 @@ void MainWindow::Init(){
     connect(submit, &textButton::clicked, this, [=](){
         ofstream outfile;
         outfile.open("default.bsd");
+
+        outfile<<"CameraNumber: ";
+        if((structureSel->value()) == 0) outfile << 0;
+        else outfile << 1;
         outfile<<"TimeBetweenFrame: ";
         if((structureSel->value()) == 0) outfile << 30;
         else outfile << 20;
@@ -294,6 +304,7 @@ void MainWindow::Init(){
         if((dirSel->value()) == 0) outfile << 25;
         else outfile << 12;
         outfile<<endl;
+
         outfile.close();
 
         QProcess process;
@@ -328,6 +339,7 @@ void MainWindow::Init(){
     createNewPage->AddContent(submit);
     createNewPage->AddContent(dirSel);
     createNewPage->AddContent(structureSel);
+    createNewPage->AddContent(structureSelzero);
     createNewPage->AddContent(whiteSpace);
     createNewPage->AddContent(structureSel0);
  //   createNewPage->AddContent(redescribe);
