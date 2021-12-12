@@ -34,7 +34,7 @@ void flip(Mat& image) {
 	for (int j = 0; j < nr; j++) {
 		uchar* data = image.ptr<uchar>(j);
 		for (int i = 0; i < nc; i++) {
-			if (data[i] > 210)
+			if (data[i] > 215)
 				data[i] = 255;
 			else
 				data[i] = 0;
@@ -42,15 +42,16 @@ void flip(Mat& image) {
 	}
 }
 
-void find(Mat& image, pair<int, int>& pos, int& pointNum) {
+void find(Mat& image, pair<int, int>& pos, int& pointNum, Mat& past1) {
 	flip(image);
 	int nr = image.rows;					// number of rows
 	int nc = image.cols * image.channels(); // total number of elements per line
 	int all = 0;
 	for (int j = nr / 5; j < nr / 5 * 4; j++) {
 		uchar* data = image.ptr<uchar>(j);
+		uchar* data2 = past1.ptr<uchar>(j);
 		for (int i = nc / 5; i < nc / 5 * 4; i++) {
-			if (data[i] > 205) {
+			if (data[i] > 215 && data2[i]!=data[i]) {
 				all++;
 				pos.first += i;
 				pos.second += j;
@@ -168,6 +169,8 @@ int main() {
 	cvtColor(frame, firstFrame, COLOR_BGR2GRAY);
 	GaussianBlur(firstFrame, firstFrame, Size(21, 21), 0);
 
+	Mat past1 = frame;
+	waitKey(TimeBetweenFrame);
 	while (camera.read(frame)) {
 		// convert to grayscale
 		cvtColor(frame, gray, COLOR_BGR2GRAY);
@@ -181,18 +184,18 @@ int main() {
 		findContours(thresh, cnts, RETR_EXTERNAL, CHAIN_APPROX_SIMPLE);
 
 		bool flag = 0;
-		Mat past = frame;
 		pair<int, int> pos;
+		Mat past = frame;
 		for (int i = 0; i < cnts.size(); i++) {
-			if (contourArea(cnts[i]) < 3000) {
+			if (contourArea(cnts[i]) < 2800) {
 				past = frame;
 				continue;
 			}
 			int pointNumber = 0;
 			int MaxNum = past.cols * past.rows / 10;
-			int MinNum = past.cols * past.rows / 10000;
+			int MinNum = past.cols * past.rows / 12000;
 			if (flag == 0) {
-				find(past, pos, pointNumber);
+				find(past, pos, pointNumber, past1);
 				if (pointNumber > MaxNum) {
 					putText(frame, (string)("Background is too white."), Point(10, 20), FONT_HERSHEY_SIMPLEX, 0.75, Scalar(0, 162, 255), 2);
 					// cout << "MaxNUM  " << MaxNum  << endl;
@@ -237,6 +240,13 @@ int main() {
 				continue;
 			output += " (" + to_string(pos.first) + "," + to_string(pos.second) + ")";
 			putText(frame, output, Point(10, 20), FONT_HERSHEY_SIMPLEX, 0.75, color, 2);
+			for (int i = 1; i <= 2.2 * TimeBetweenFrame; i++) {
+				camera.read(frame);
+				putText(frame, output, Point(10, 20), FONT_HERSHEY_SIMPLEX, 0.75, color, 2);
+				imshow("羽毛球发球检测系统[摄像头]（按ESC退出）", frame);
+				waitKey(TimeBetweenFrame);
+			}
+			//	waitKey(50 * TimeBetweenFrame);
 			break;
 		}
 
@@ -255,7 +265,9 @@ int main() {
 			cvtColor(frame, firstFrame, COLOR_BGR2GRAY);
 			GaussianBlur(firstFrame, firstFrame, Size(21, 21), 0);
 			past_time = now_time;
+			past = frame;
 		}
+		past1 = frame;
 		waitKey(TimeBetweenFrame);
 	}
 
