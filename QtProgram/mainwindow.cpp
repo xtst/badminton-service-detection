@@ -61,10 +61,10 @@ void MainWindow::Init(){
     /* Create about page */
     defaultSettingsPage = new SlidePage(cornerRadius, "关于", ui->mainWidget);
     textInputItem *version = new textInputItem("版本", defaultSettingsPage);
-    version->setValue("0.1.1");
+    version->setValue("1.0.0");
     version->setEnabled(false);
     textInputItem *updateDate = new textInputItem("最近更新于", defaultSettingsPage);
-    updateDate->setValue("2021/12/12 2:44");
+    updateDate->setValue("2021/12/13 0:25");
     updateDate->setEnabled(false);
     textInputItem *Author = new textInputItem("作者", defaultSettingsPage);
     Author->setValue("辛统 林程炜 秦世煌 阎琦新");

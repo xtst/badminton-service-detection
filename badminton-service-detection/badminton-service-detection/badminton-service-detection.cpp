@@ -187,7 +187,7 @@ int main() {
 		pair<int, int> pos;
 		Mat past = frame;
 		for (int i = 0; i < cnts.size(); i++) {
-			if (contourArea(cnts[i]) < 1000) {
+			if (contourArea(cnts[i]) < 2000) {
 				past = frame;
 				continue;
 			}
@@ -206,7 +206,7 @@ int main() {
 			flag = 1;
 			string output = "";
 			auto color = Scalar(0, 0, 255);
-			if (pointNumber > MinNum && pastPos >= 0 && abs(pos.first - pastPos) > MoveRange) {
+			if (pointNumber > MinNum && pastPos >= 0 && abs(pos.first - pastPos) > 0.5*MoveRange) {
 				if (pos.second < frame.rows / 2) {
 					cout << MusicPosition << endl;
 					output = "Service Faults";
