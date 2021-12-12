@@ -253,7 +253,6 @@ int main() {
 			GaussianBlur(firstFrame, firstFrame, Size(21, 21), 0);
 			past_time = now_time;
 		}
-
 		waitKey(TimeBetweenFrame);
 	}
 
