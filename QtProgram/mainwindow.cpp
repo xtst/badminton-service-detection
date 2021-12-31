@@ -61,10 +61,10 @@ void MainWindow::Init(){
     /* Create about page */
     defaultSettingsPage = new SlidePage(cornerRadius, "关于", ui->mainWidget);
     textInputItem *version = new textInputItem("版本", defaultSettingsPage);
-    version->setValue("1.0.0");
+    version->setValue("1.1.0");
     version->setEnabled(false);
     textInputItem *updateDate = new textInputItem("最近更新于", defaultSettingsPage);
-    updateDate->setValue("2021/12/13 0:25");
+    updateDate->setValue("2021/12/30 19:45");
     updateDate->setEnabled(false);
     textInputItem *Author = new textInputItem("作者", defaultSettingsPage);
     Author->setValue("辛统 林程炜 秦世煌 阎琦新");
@@ -248,7 +248,7 @@ void MainWindow::Init(){
     layersPage->AddContent(openFileBtn);
     layersPage->AddContent(layerSel);
     connect(addNewBtn, &textButton::clicked, this, [=](){
-        const QUrl regUrl(QLatin1String("https://www.bilibili.com/video/BV1jR4y147g8"));
+        const QUrl regUrl(QLatin1String("https://www.bilibili.com/video/BV1p44y177D2"));
         QDesktopServices::openUrl(regUrl);
 //        rename->setValue("Layer_" + QString::asprintf("%d", canvasList.size()));
 //        redescribe->setValue("No description");createNewPage->slideIn();
